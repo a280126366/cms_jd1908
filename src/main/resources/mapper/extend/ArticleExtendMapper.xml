@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.apps.cms.dao.extend.ArticleExtendMapper">
+	<select id="selectComment" parameterType="Long" resultMap="com.briup.apps.cms.dao.CommentMapper.BaseResultMap">
+		SELECT *
+		FROM cms_comment
+		WHERE article_id=#{id}
+	</select>
+  <resultMap id="ArticleExtendResultMap" type="com.briup.apps.cms.bean.extend.ArticleExtend" extends="com.briup.apps.cms.dao.ArticleMapper.BaseResultMap">
+    
+    <association property="category" resultMap="com.briup.apps.cms.dao.CategoryMapper.BaseResultMap"></association>
+    <collection property="comments" column="article_id" select="selectComment"></collection>
+  </resultMap>
+  <select id="selectArticleExtendAll" resultMap="ArticleExtendResultMap">
+  	SELECT *
+  	FROM cms_article a left outer join cms_category c on a.category_id=c.id
+  </select>
+  <select id="selectArticleExtendById" parameterType="Long" resultMap="ArticleExtendResultMap">
+  	SELECT *
+  	FROM cms_article a 
+  		left outer join cms_category ca on a.category_id=ca.id
+  	 	left outer join cms_comment co on a.id=co.article_id
+  	 WHERE
+  	 	a.id=#{id}
+  </select>
+</mapper>
